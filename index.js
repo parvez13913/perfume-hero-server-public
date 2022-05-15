@@ -18,6 +18,7 @@ async function run() {
     try {
         await client.connect();
         const inventoryCollection = client.db("perfumeHero").collection("service");
+        const myInventoryCollection = client.db("perfumeHero").collection("myInventory");
         app.get('/inventory', async (req, res) => {
             const query = {}
             const cursor = inventoryCollection.find(query);
@@ -49,6 +50,8 @@ async function run() {
         });
 
 
+
+
         // update inventory
         app.put('/inventory/:id', async (req, res) => {
             const updateInventory = req.body;
@@ -60,6 +63,27 @@ async function run() {
             };
             const result = await inventoryCollection.updateOne(query, updateDoc, options);
             console.log(result);
+            res.send(result);
+        });
+
+        // my Inventory
+        app.post('/myInventory', async (req, res) => {
+            const myInventory = req.body;
+            const result = await myInventoryCollection.insertOne(myInventory);
+            res.send(result);
+        });
+
+        app.get('/myInventory', async (req, res) => {
+            const email = req.query.email
+            const query = { email: email };
+            const cursor = myInventoryCollection.find(query);
+            const myInventory = await cursor.toArray(cursor);
+            res.send(myInventory);
+        });
+        app.delete('/myInventory/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await myInventoryCollection.deleteOne(query);
             res.send(result);
         });
     }
