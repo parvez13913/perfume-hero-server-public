@@ -96,7 +96,7 @@ async function run() {
             if (email === decodedEmail) {
                 const query = { email: email };
                 const cursor = myInventoryCollection.find(query);
-                const myInventory = await cursor.toArray(cursor);
+                const myInventory = await cursor.toArray();
                 res.send(myInventory);
             }
 
